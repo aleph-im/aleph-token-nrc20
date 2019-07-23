@@ -60,6 +60,13 @@ public class AlephToken extends Ownable implements Contract, Token {
         }
     }
 
+    protected void onlyOwnerIfLocked(Address account) {
+        if (!isUnlocked) {
+            require(account.equals(owner), "Contract locked," +
+                    " only the owner of the contract can execute it.");
+        }
+    }
+
     @Override
     @View
     public BigInteger totalSupply() {
@@ -100,7 +107,7 @@ public class AlephToken extends Ownable implements Contract, Token {
     }
 
     public boolean bulkTransferFrom(@Required Address from, @Required String[] targets, @Required long[] values) {
-        onlyOwnerIfLocked();
+        onlyOwnerIfLocked(from);
         for (int i = 0; i < targets.length; i++) {
             Address to = new Address(targets[i]);
             BigInteger value = BigInteger.valueOf(values[i]);
